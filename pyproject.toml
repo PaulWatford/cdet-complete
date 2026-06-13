@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cdet-suite"
+version = "1.0.0"
+description = "Numerically-exact connected-determinant (CDet) toolkit for the fermionic Hubbard / SU(N) problem"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+authors = [{ name = "CDet suite" }]
+keywords = ["quantum-monte-carlo", "hubbard-model", "connected-determinant", "diagrammatic", "SU(N)"]
+classifiers = ["License :: Other/Proprietary License", "Intended Audience :: Science/Research"]
+dependencies = ["numpy>=1.21", "mpmath>=1.2"]
+
+[project.optional-dependencies]
+viz = ["matplotlib>=3.5"]
+rich = ["rich>=13.0"]
+hdf5 = ["h5py>=3.0"]
+bindings = ["pybind11>=2.10"]
+all = ["matplotlib>=3.5", "rich>=13.0", "h5py>=3.0"]
+
+[project.scripts]
+cdet = "cdet:main"
+
+[tool.setuptools]
+py-modules = ["cdet"]
+
+[project.urls]
+Documentation = "https://github.com/cdet-suite/cdet"

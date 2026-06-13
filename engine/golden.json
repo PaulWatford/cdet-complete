@@ -1,0 +1,786 @@
+{
+  "params": {
+    "beta": 5.0,
+    "mu": 0.3,
+    "t": 1.0,
+    "U": 1.0
+  },
+  "cases": [
+    {
+      "name": "atom.G0.tau=0.1",
+      "value": -0.18798120811510513
+    },
+    {
+      "name": "atom.G0.tau=0.5",
+      "value": -0.2119482203058684
+    },
+    {
+      "name": "atom.G0.tau=1.0",
+      "value": -0.24624870003667595
+    },
+    {
+      "name": "atom.G0.tau=2.5",
+      "value": -0.38619483692863227
+    },
+    {
+      "name": "atom.G0.tau=4.5",
+      "value": -0.7036928729814076
+    },
+    {
+      "name": "atom.G0.tau=-0.5",
+      "value": 0.7036928729814076
+    },
+    {
+      "name": "atom.G0.tau=5.5",
+      "value": 0.21194822030586843
+    },
+    {
+      "name": "atom.G0.zerominus",
+      "value": 0.8175744761936437
+    },
+    {
+      "name": "atom.nF",
+      "value": 0.8175744761936437
+    },
+    {
+      "name": "atom.density_exact.U=1",
+      "value": 0.4571893626213836
+    },
+    {
+      "name": "atom.Gexact.tau=0.5.U=1",
+      "value": -0.4277799528590106
+    },
+    {
+      "name": "atom.Gexact.tau=1.0.U=1",
+      "value": -0.35404507346473285
+    },
+    {
+      "name": "atom.Gexact.tau=2.5.U=1",
+      "value": -0.28674947769357567
+    },
+    {
+      "name": "atom.CV.n=0",
+      "value": -0.24624870003667593
+    },
+    {
+      "name": "atom.CV.n=1",
+      "value": -0.16459953200844915
+    },
+    {
+      "name": "atom.CV.n=2",
+      "value": 0.0791260282679172
+    },
+    {
+      "name": "atom.CV.n=3",
+      "value": 0.09961512837909445
+    },
+    {
+      "name": "atom.CV.n=4",
+      "value": 0.047636978648243275
+    },
+    {
+      "name": "dimer.G0.00.tau=0.1",
+      "value": -0.45338643303412085
+    },
+    {
+      "name": "dimer.G0.00.tau=1.0",
+      "value": -0.24376878191553875
+    },
+    {
+      "name": "dimer.G0.00.tau=2.5",
+      "value": -0.10369812110017948
+    },
+    {
+      "name": "dimer.G0.01.tau=0.1",
+      "value": 0.45167684407160547
+    },
+    {
+      "name": "dimer.G0.01.tau=1.0",
+      "value": 0.2382604988634045
+    },
+    {
+      "name": "dimer.G0.01.tau=2.5",
+      "value": 0.06498212042127302
+    },
+    {
+      "name": "dimer.G0.10.tau=0.1",
+      "value": 0.45167684407160547
+    },
+    {
+      "name": "dimer.G0.10.tau=1.0",
+      "value": 0.2382604988634045
+    },
+    {
+      "name": "dimer.G0.10.tau=2.5",
+      "value": 0.06498212042127302
+    },
+    {
+      "name": "dimer.G0.11.tau=0.1",
+      "value": -0.45338643303412085
+    },
+    {
+      "name": "dimer.G0.11.tau=1.0",
+      "value": -0.24376878191553875
+    },
+    {
+      "name": "dimer.G0.11.tau=2.5",
+      "value": -0.10369812110017948
+    },
+    {
+      "name": "piflux.G0.00.tau=0.5",
+      "value": -0.2855691325704326
+    },
+    {
+      "name": "piflux.G0.00.tau=2.0",
+      "value": -0.05656521968928761
+    },
+    {
+      "name": "piflux.G0.01.tau=0.5",
+      "value": 0.20161217201676984
+    },
+    {
+      "name": "piflux.G0.01.tau=2.0",
+      "value": 0.0358673443674127
+    },
+    {
+      "name": "piflux.G0.02.tau=0.5",
+      "value": -5.551115123125783e-17
+    },
+    {
+      "name": "piflux.G0.02.tau=2.0",
+      "value": -2.7755575615628914e-17
+    },
+    {
+      "name": "piflux.G0.03.tau=0.5",
+      "value": -0.2016121720167698
+    },
+    {
+      "name": "piflux.G0.03.tau=2.0",
+      "value": -0.03586734436741265
+    },
+    {
+      "name": "piflux.G0.12.tau=0.5",
+      "value": 0.2016121720167699
+    },
+    {
+      "name": "piflux.G0.12.tau=2.0",
+      "value": 0.03586734436741271
+    },
+    {
+      "name": "hexring.G0.00.tau=0.5",
+      "value": -0.30019589135764513
+    },
+    {
+      "name": "hexring.G0.00.tau=2.0",
+      "value": -0.09225576985266479
+    },
+    {
+      "name": "hexring.G0.01.tau=0.5",
+      "value": 0.1847420876126048
+    },
+    {
+      "name": "hexring.G0.01.tau=2.0",
+      "value": 0.04191930631685841
+    },
+    {
+      "name": "hexring.G0.02.tau=0.5",
+      "value": 0.04325795150721359
+    },
+    {
+      "name": "hexring.G0.02.tau=2.0",
+      "value": 0.0375343208870683
+    },
+    {
+      "name": "hexring.G0.03.tau=0.5",
+      "value": -0.15583617934768282
+    },
+    {
+      "name": "hexring.G0.03.tau=2.0",
+      "value": -0.06765925977537485
+    },
+    {
+      "name": "hexring.G0.05.tau=0.5",
+      "value": 0.18474208761260486
+    },
+    {
+      "name": "hexring.G0.05.tau=2.0",
+      "value": 0.041919306316858425
+    },
+    {
+      "name": "dimer.CV.n=0",
+      "value": -0.24376878191553875
+    },
+    {
+      "name": "dimer.CV.n=1",
+      "value": -0.06437906419690663
+    },
+    {
+      "name": "dimer.CV.n=2",
+      "value": 0.011755791680138709
+    },
+    {
+      "name": "piflux.CV.n=0",
+      "value": -0.16399042910303993
+    },
+    {
+      "name": "piflux.CV.n=1",
+      "value": -0.04129352756507696
+    },
+    {
+      "name": "piflux.CV.n=2",
+      "value": 0.004378857954986379
+    },
+    {
+      "name": "hexring.CV.n=0",
+      "value": -0.1929704212226601
+    },
+    {
+      "name": "hexring.CV.n=1",
+      "value": -0.050054424541857656
+    },
+    {
+      "name": "hexring.CV.n=2",
+      "value": 0.003911568924235191
+    },
+    {
+      "name": "closed.dimer.G0.00.tau=0.1",
+      "value": -0.45338643303412085
+    },
+    {
+      "name": "closed.dimer.G0.00.tau=1.0",
+      "value": -0.24376878191553875
+    },
+    {
+      "name": "closed.dimer.G0.00.tau=2.5",
+      "value": -0.10369812110017948
+    },
+    {
+      "name": "closed.dimer.G0.01.tau=0.1",
+      "value": 0.45167684407160547
+    },
+    {
+      "name": "closed.dimer.G0.01.tau=1.0",
+      "value": 0.2382604988634045
+    },
+    {
+      "name": "closed.dimer.G0.01.tau=2.5",
+      "value": 0.06498212042127302
+    },
+    {
+      "name": "closed.dimer.G0.10.tau=0.1",
+      "value": 0.45167684407160547
+    },
+    {
+      "name": "closed.dimer.G0.10.tau=1.0",
+      "value": 0.2382604988634045
+    },
+    {
+      "name": "closed.dimer.G0.10.tau=2.5",
+      "value": 0.06498212042127302
+    },
+    {
+      "name": "closed.dimer.G0.11.tau=0.1",
+      "value": -0.45338643303412085
+    },
+    {
+      "name": "closed.dimer.G0.11.tau=1.0",
+      "value": -0.24376878191553875
+    },
+    {
+      "name": "closed.dimer.G0.11.tau=2.5",
+      "value": -0.10369812110017948
+    },
+    {
+      "name": "closed.piflux.G0.00.tau=0.5",
+      "value": -0.2855691325704326
+    },
+    {
+      "name": "closed.piflux.G0.00.tau=2.0",
+      "value": -0.05656521968928761
+    },
+    {
+      "name": "closed.piflux.G0.01.tau=0.5",
+      "value": 0.20161217201676984
+    },
+    {
+      "name": "closed.piflux.G0.01.tau=2.0",
+      "value": 0.0358673443674127
+    },
+    {
+      "name": "closed.piflux.G0.02.tau=0.5",
+      "value": -5.551115123125783e-17
+    },
+    {
+      "name": "closed.piflux.G0.02.tau=2.0",
+      "value": -2.7755575615628914e-17
+    },
+    {
+      "name": "closed.piflux.G0.03.tau=0.5",
+      "value": -0.2016121720167698
+    },
+    {
+      "name": "closed.piflux.G0.03.tau=2.0",
+      "value": -0.03586734436741265
+    },
+    {
+      "name": "closed.piflux.G0.12.tau=0.5",
+      "value": 0.2016121720167699
+    },
+    {
+      "name": "closed.piflux.G0.12.tau=2.0",
+      "value": 0.03586734436741271
+    },
+    {
+      "name": "closed.hexring.G0.00.tau=0.5",
+      "value": -0.30019589135764513
+    },
+    {
+      "name": "closed.hexring.G0.00.tau=2.0",
+      "value": -0.09225576985266479
+    },
+    {
+      "name": "closed.hexring.G0.01.tau=0.5",
+      "value": 0.1847420876126048
+    },
+    {
+      "name": "closed.hexring.G0.01.tau=2.0",
+      "value": 0.04191930631685841
+    },
+    {
+      "name": "closed.hexring.G0.02.tau=0.5",
+      "value": 0.04325795150721359
+    },
+    {
+      "name": "closed.hexring.G0.02.tau=2.0",
+      "value": 0.0375343208870683
+    },
+    {
+      "name": "closed.hexring.G0.03.tau=0.5",
+      "value": -0.15583617934768282
+    },
+    {
+      "name": "closed.hexring.G0.03.tau=2.0",
+      "value": -0.06765925977537485
+    },
+    {
+      "name": "closed.hexring.G0.05.tau=0.5",
+      "value": 0.18474208761260486
+    },
+    {
+      "name": "closed.hexring.G0.05.tau=2.0",
+      "value": 0.041919306316858425
+    },
+    {
+      "name": "closed.dimer.CV.n=0",
+      "value": -0.24376878191553875
+    },
+    {
+      "name": "closed.dimer.CV.n=1",
+      "value": -0.06437906419690663
+    },
+    {
+      "name": "closed.dimer.CV.n=2",
+      "value": 0.011755791680138709
+    },
+    {
+      "name": "closed.piflux.CV.n=0",
+      "value": -0.16399042910303993
+    },
+    {
+      "name": "closed.piflux.CV.n=1",
+      "value": -0.04129352756507696
+    },
+    {
+      "name": "closed.piflux.CV.n=2",
+      "value": 0.004378857954986379
+    },
+    {
+      "name": "closed.hexring.CV.n=0",
+      "value": -0.1929704212226601
+    },
+    {
+      "name": "closed.hexring.CV.n=1",
+      "value": -0.050054424541857656
+    },
+    {
+      "name": "closed.hexring.CV.n=2",
+      "value": 0.003911568924235191
+    },
+    {
+      "name": "momfreq.hexring.G0.00.tau=0.5",
+      "value": -0.30019589135764513
+    },
+    {
+      "name": "momfreq.hexring.G0.00.tau=2.0",
+      "value": -0.09225576985266479
+    },
+    {
+      "name": "momfreq.hexring.G0.01.tau=0.5",
+      "value": 0.1847420876126048
+    },
+    {
+      "name": "momfreq.hexring.G0.01.tau=2.0",
+      "value": 0.04191930631685841
+    },
+    {
+      "name": "momfreq.hexring.G0.02.tau=0.5",
+      "value": 0.04325795150721359
+    },
+    {
+      "name": "momfreq.hexring.G0.02.tau=2.0",
+      "value": 0.0375343208870683
+    },
+    {
+      "name": "momfreq.hexring.G0.03.tau=0.5",
+      "value": -0.15583617934768282
+    },
+    {
+      "name": "momfreq.hexring.G0.03.tau=2.0",
+      "value": -0.06765925977537485
+    },
+    {
+      "name": "momfreq.hexring.G0.05.tau=0.5",
+      "value": 0.18474208761260486
+    },
+    {
+      "name": "momfreq.hexring.G0.05.tau=2.0",
+      "value": 0.041919306316858425
+    },
+    {
+      "name": "momfreq.flip.00.tau=0.7",
+      "value": -0.25016779890143226
+    },
+    {
+      "name": "momfreq.flip.00.tau=1.3",
+      "value": -0.15126695216173783
+    },
+    {
+      "name": "momfreq.flip.01.tau=0.7",
+      "value": 0.14917470431137667
+    },
+    {
+      "name": "momfreq.flip.01.tau=1.3",
+      "value": 0.08201110058004765
+    },
+    {
+      "name": "momfreq.flip.03.tau=0.7",
+      "value": -0.14629505921191438
+    },
+    {
+      "name": "momfreq.flip.03.tau=1.3",
+      "value": -0.10928375583019237
+    },
+    {
+      "name": "qss.detM.n=1",
+      "value": 0.509302565662719
+    },
+    {
+      "name": "qss.detM.n=2",
+      "value": 0.35768529605511684
+    },
+    {
+      "name": "qss.detM.n=3",
+      "value": 0.2534382182768485
+    },
+    {
+      "name": "qss.detM.n=4",
+      "value": 0.18103251975536924
+    },
+    {
+      "name": "qss.detM.n=5",
+      "value": 0.1304429510646826
+    },
+    {
+      "name": "qss.detM.n=6",
+      "value": 0.094955006332583
+    },
+    {
+      "name": "qss.detM.n=8",
+      "value": 0.05237055813715721
+    },
+    {
+      "name": "qss.detM.n=10",
+      "value": 0.031160063221618
+    },
+    {
+      "name": "qss.detM.n=12",
+      "value": 0.020892763135339984
+    },
+    {
+      "name": "quad.1d.npp=8",
+      "value": 0.006433869079465828
+    },
+    {
+      "name": "quad.1d.npp=16",
+      "value": 0.006433869079466645
+    },
+    {
+      "name": "quad.2d.npp=8",
+      "value": 0.04485911784791934
+    },
+    {
+      "name": "quad.2d.npp=16",
+      "value": 0.04140833239457567
+    },
+    {
+      "name": "sym.fullsum.n2",
+      "value": -0.03400719805807039
+    },
+    {
+      "name": "sym.cfg.00",
+      "value": -0.01487288687499324
+    },
+    {
+      "name": "sym.cfg.01",
+      "value": -0.0019269948183146604
+    },
+    {
+      "name": "sym.cfg.02",
+      "value": -3.291860608186509e-05
+    },
+    {
+      "name": "sym.cfg.03",
+      "value": -0.0006651661819453425
+    },
+    {
+      "name": "sym.cfg.12",
+      "value": 0.00017764866491088577
+    },
+    {
+      "name": "sym.cfg.24",
+      "value": -7.384002763064987e-05
+    },
+    {
+      "name": "samesite.CV.n=0",
+      "value": -0.2722872499646897
+    },
+    {
+      "name": "samesite.CV.n=1",
+      "value": -0.07440978601900476
+    },
+    {
+      "name": "samesite.CV.n=2",
+      "value": 0.03014410198057863
+    },
+    {
+      "name": "samesite.CV.n=3",
+      "value": -0.012423578610201453
+    },
+    {
+      "name": "samesite.CV.n=4",
+      "value": -0.0046839017365338555
+    },
+    {
+      "name": "r1.detbuild.n=1",
+      "value": 0.509302565662719
+    },
+    {
+      "name": "r1.detbuild.n=2",
+      "value": 0.35768529605511684
+    },
+    {
+      "name": "r1.detbuild.n=4",
+      "value": 0.18103251975536924
+    },
+    {
+      "name": "r1.detbuild.n=6",
+      "value": 0.094955006332583
+    },
+    {
+      "name": "r1.detbuild.n=8",
+      "value": 0.05237055813715721
+    },
+    {
+      "name": "r1.remove.n6.ri2",
+      "value": 0.11088137190960567
+    },
+    {
+      "name": "qssc.detM.n=2",
+      "value": 0.2607725805385243
+    },
+    {
+      "name": "qssc.detM.n=3",
+      "value": 0.13457781275041436
+    },
+    {
+      "name": "qssc.detM.n=4",
+      "value": 0.07456809456625324
+    },
+    {
+      "name": "qssc.detM.n=6",
+      "value": 0.0231396899474813
+    },
+    {
+      "name": "qssc.detM.n=8",
+      "value": 0.007477347265575644
+    },
+    {
+      "name": "qssc.detM.n=10",
+      "value": 0.0025404202024449387
+    },
+    {
+      "name": "qssc.detM.n=12",
+      "value": 0.0009067321002881855
+    },
+    {
+      "name": "par.batchsum",
+      "value": 0.38041091058206744
+    },
+    {
+      "name": "tree.detM.n=12.leaves=1",
+      "value": 0.020892763135339984
+    },
+    {
+      "name": "tree.detM.n=12.leaves=3",
+      "value": 0.020892763135339984
+    },
+    {
+      "name": "tree.detM.n=12.leaves=4",
+      "value": 0.020892763135339984
+    },
+    {
+      "name": "tree.detM.n=12.leaves=5",
+      "value": 0.020892763135339984
+    },
+    {
+      "name": "tree.detM.n=12.leaves=12",
+      "value": 0.020892763135339984
+    },
+    {
+      "name": "driver.O1",
+      "value": 0.09220495478924626
+    },
+    {
+      "name": "driver.O2",
+      "value": 0.27936776614036096
+    },
+    {
+      "name": "dyndet.build",
+      "value": 0.030201063682149133
+    },
+    {
+      "name": "dyndet.insert",
+      "value": 0.027740295780467276
+    },
+    {
+      "name": "dyndet.remove",
+      "value": 0.0347061040054642
+    },
+    {
+      "name": "dyndet.reorder",
+      "value": 0.03967371043313273
+    },
+    {
+      "name": "anchor.Z.tau1",
+      "value": 2.000000000000001
+    },
+    {
+      "name": "anchor.Z.2i",
+      "value": 2.8709999455101505
+    },
+    {
+      "name": "anchor.Z.tau1.R1",
+      "value": 2.4142135623730963
+    },
+    {
+      "name": "anchor.Sratio.ring64",
+      "value": 0.9693919106004357
+    },
+    {
+      "name": "anchor.Sratio.hexring",
+      "value": 0.7275235570914247
+    },
+    {
+      "name": "anchor.gap.piflux",
+      "value": 2.82842712474619
+    },
+    {
+      "name": "anchor.Zfermion.1.3i",
+      "value": 2.491787721223667
+    },
+    {
+      "name": "anchor.Zfermion.Sratio",
+      "value": 1.0000000000000002
+    },
+    {
+      "name": "anchor.sector4.Sratio",
+      "value": 1.7979708895047852
+    },
+    {
+      "name": "anchor.c.gapless",
+      "value": 1.000913797483757
+    },
+    {
+      "name": "anchor.c.gapped",
+      "value": -5.717785897928136e-06
+    },
+    {
+      "name": "anchor.Z.tau0",
+      "value": 1.9441612972396662
+    },
+    {
+      "name": "anchor.Z.tau0.orbitspread",
+      "value": 6.661338147750939e-16
+    },
+    {
+      "name": "anchor.Tduality.R0.8",
+      "value": 0.0
+    },
+    {
+      "name": "anchor.Tduality.R1.7",
+      "value": 0.0
+    },
+    {
+      "name": "anchor.c.gapless.rms",
+      "value": 5.88984170187185e-06
+    },
+    {
+      "name": "anchor.c.gapless.stderr",
+      "value": 0.0001928384376281488
+    },
+    {
+      "name": "anchor.Zorb.selfdual",
+      "value": 3.4671665015463726
+    },
+    {
+      "name": "anchor.Zorb.Sinv",
+      "value": 0.0
+    },
+    {
+      "name": "anchor.Zorb.Tdual",
+      "value": 0.0
+    },
+    {
+      "name": "anchor.canary.prov",
+      "value": 2.9437629342371454
+    },
+    {
+      "name": "cyclo.r12.val",
+      "value": 0.3076923076923077
+    },
+    {
+      "name": "cyclo.r23.val",
+      "value": 0.5625
+    },
+    {
+      "name": "cyclo.r13.val",
+      "value": 0.02197802197802198
+    },
+    {
+      "name": "cyclo.r12.den",
+      "value": 13.0
+    },
+    {
+      "name": "cyclo.r23.den",
+      "value": 16.0
+    },
+    {
+      "name": "cyclo.r13.den",
+      "value": 91.0
+    },
+    {
+      "name": "cyclo.hub",
+      "value": 91.0
+    }
+  ]
+}

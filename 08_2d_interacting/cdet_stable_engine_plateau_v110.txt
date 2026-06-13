@@ -1,0 +1,14 @@
+# v110 plateau grid: long-double engine (-DUSE_LD), fixed sites (1,2,4), cluster IS, MoM
+# float64 NaNs at beta>=96; long double reaches beta=120. Combined with the v109 float64 grid (24-64).
+# beta    A(e-9)         |c1|(e-9)     z=2+ln(A/|c1|)/beta    prec
+  24      1.203316       236.27        1.7800                 float64 (v109)
+  32      0.5551734      204.74        1.8153                 float64 (v109)
+  40      0.2517563      185.01        1.8350                 float64 (v109)
+  48      0.1580456      177.20        1.8537                 float64 (v109)
+  56      0.1016786      168.76        1.8676                 float64 (v109)
+  64      0.06768385     161.79        1.8784                 float64 (v109)
+  80      0.03349639     152.74        1.8947                 long double (v110)
+ 100      0.01650291     149.38        1.9089                 long double (v110)
+ 120      0.009545303    142.52        1.9199                 long double (v110)
+# z RISES MONOTONICALLY, no plateau. Crosses 15/8(b~61), 17/9(b~74), 19/10(b~87). rho_A still
+# decreasing at b=120 (0.035->0.027): asymptote at b>>120, z(inf) in [1.95,2.0], plausibly ->2.

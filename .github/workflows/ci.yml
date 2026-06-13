@@ -1,0 +1,48 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install (with optional extras)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[all]"
+      - name: Frozen reference engine (194/194 -- the parity anchor)
+        run: |
+          cd engine && make CC=gcc test
+      - name: Suite validation gates (cdet validate)
+        run: |
+          cdet validate
+      - name: Module self-tests
+        run: |
+          cd 08_2d_interacting
+          for m in consolidation_v161 double_occupancy susceptibilities plots sun_eos_conformal two_particle_run; do
+            echo "== $m ==" && PYTHONPATH=. python3 $m.py
+          done
+      - name: CLI self-test
+        run: python3 cdet.py --selftest
+      - name: Native bindings (optional -- build + parity/benchmark gate)
+        run: |
+          pip install "pybind11>=2.10"
+          python bindings/build.py
+          python bindings/bindings_check.py
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image (bakes in the 194/194 gate)
+        run: docker build -t cdet-suite .
+      - name: Run the suite validation in the container
+        run: docker run --rm cdet-suite validate

@@ -1,0 +1,11 @@
+**/__pycache__
+**/*.pyc
+**/*.o
+**/*.so
+**/*.egg-info
+cdet_figures
+cdet_data
+**/cdet_runs
+**/.eos_cache.json
+bindings/*.so
+.git

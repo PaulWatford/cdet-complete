@@ -1,0 +1,23 @@
+FROZEN BASELINE ORACLE — refreshed v35 (deliberate). New experiments go in ../engine_exp/.
+
+This baseline is the validated reference solver (matches the independent Python reference 194/194 to
+1e-9). It was deliberately refreshed in v35 by promoting two core files from engine_exp/ that had been
+validated bit-identical in output:
+  - cdet_engine.c : v26 buffer removal (MAXDIM[18]/sub[16] fixed arrays -> dynamic, sized to n) + an
+                    OOM-safe NaN guard. Removes the n<=16 order cap; no segfault on large alloc.
+  - quad.c        : v34 fix -- Gauss-Legendre node/weight arrays sized to np (were fixed double[64],
+                    overflowed the stack for np>64).
+
+INVARIANT (the refresh changed NO numerical result; verify after any future change):
+  cdet_order(1,2) @ L=6,beta=4,mu=0.7,t=1,tau=0.123/0.877,np=40 = -0.5082750022348369 / 0.44040518398732875
+  C_V n=8,12,16   @ hexring beta=4,mu=0.7,t=1, tau_out=1.5,tau_in=0.5, sites k%6, tau=(k+.5)/n*beta =
+                    4.107893936632339e-08 / 5.2004546552889602e-10 / 3.6922703728839982e-11
+  engine 194/194 vs Python reference.
+NEW CAPABILITY gained by the refresh: C_V runs for n>16 (e.g. n=17,18) and cdet_order for np>64 (e.g.
+np=96 reproduces the np<=64 value), neither of which the pre-v35 baseline could do.
+
+Provenance: pre-v35 the baseline carried fixed MAXDIM[18]/sub[16]/node[64] buffers; that "pristine =
+has-the-caps" property is retired. The baseline's defining property is now: reproduces the invariant
+above AND is buffer-free / OOM-safe. engine/ core and engine_exp/ core are intentionally identical after
+this refresh; engine_exp/ additionally carries the experimental tools (diagmc, cdet_config, blocked_cv,
+...). The next round of unvalidated work forks from here into engine_exp/ as before.
