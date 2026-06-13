@@ -19,6 +19,8 @@ Two distinct kinds of "next position", matched to each model's nature:
 The FROZEN REFERENCE source is untouched; the only hybrid change was a print-only exposure of the terminal state
 (numbers unchanged; val still 0.00e+00)."""
 import os, subprocess, statistics
+import shutil
+import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -28,17 +30,17 @@ def _sh(cmd):
 
 
 def _build():
-    _sh("cp spectrum_l6.bin /tmp/")
-    _sh("gcc -O2 -o /tmp/cpw_c cdet_planewave_engine.c -lm")
-    open("/tmp/sd_c.c", "w").write(
+    shutil.copy(os.path.join(HERE, "spectrum_l6.bin"), tempfile.gettempdir())
+    _sh(f'gcc -O2 -o "{os.path.join(tempfile.gettempdir(), 'cpw_c' + ('.exe' if os.name=='nt' else ''))}" cdet_planewave_engine.c -lm')
+    open(os.path.join(tempfile.gettempdir(), 'sd_c.c'), "w").write(
         '#include <stdio.h>\n#include <stdlib.h>\n#include "csurrogate.h"\n'
         'int main(int c,char**v){int L=atoi(v[1]);int s[16];int n=c-2;'
         'for(int i=0;i<n;i++)s[i]=atoi(v[2+i]);printf("%.10f\\n",surr_ln_magnitude(s,L));return 0;}')
-    _sh(f"gcc -O2 -I{HERE} -o /tmp/sd_c /tmp/sd_c.c csurrogate.c -lm")
+    _sh(f'gcc -O2 -I{HERE} -o "{os.path.join(tempfile.gettempdir(), 'sd_c' + ('.exe' if os.name=='nt' else ''))}" "{os.path.join(tempfile.gettempdir(), 'sd_c.c')}" csurrogate.c -lm')
 
 
 def hybrid_grid(nt, seed, beta=30):
-    out = _sh(f"/tmp/cpw_c grid {beta} {beta} 1 5 {nt} {seed} 0.01 2")
+    out = _sh(f'"{os.path.join(tempfile.gettempdir(), 'cpw_c' + ('.exe' if os.name=='nt' else ''))}" grid {beta} {beta} 1 5 {nt} {seed} 0.01 2')
     A = term = None
     for l in out.splitlines():
         if l.startswith(f"{beta}."): A = float(l.split()[1])
@@ -47,7 +49,7 @@ def hybrid_grid(nt, seed, beta=30):
 
 
 def surr_eval(sites, L=6):
-    return float(_sh(f"/tmp/sd_c {L} " + " ".join(map(str, sites))))
+    return float(_sh(f'"{os.path.join(tempfile.gettempdir(), 'sd_c' + ('.exe' if os.name=='nt' else ''))}" {L} ' + " ".join(map(str, sites))))
 
 
 def _mix(state):

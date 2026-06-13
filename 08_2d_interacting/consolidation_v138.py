@@ -20,6 +20,7 @@ PROVEN ADVANCES consolidated here (each with its own module + self-test):
 This module checks cross-path agreement on the shared observable (the addition pole = lowest-empty level)
 and that the session modules import and expose their verified entry points. Frozen engine untouched (194/194)."""
 import os, subprocess
+import tempfile
 import numpy as np
 from physical_mapping import addition_pole, CASES
 from fast_minors import fast_connected_determinant, all_principal_minors
@@ -30,9 +31,9 @@ def _surrogate_lowest_empty(L, mu):
     here = os.path.dirname(os.path.abspath(__file__))
     src = ('#include <stdio.h>\n#include "csurrogate.h"\n'
            'int main(){printf("%.12f\\n", surr_lowest_empty(' + str(L) + ',' + repr(float(mu)) + '));return 0;}')
-    open('/tmp/_le.c', 'w').write(src)
-    out = '/tmp/_le'
-    r = subprocess.run(['gcc', '-O2', '-I', here, '-o', out, '/tmp/_le.c',
+    open(os.path.join(tempfile.gettempdir(), '_le.c'), 'w').write(src)
+    out = os.path.join(tempfile.gettempdir(), '_le' + ('.exe' if os.name=='nt' else ''))
+    r = subprocess.run(['gcc', '-O2', '-I', here, '-o', out, os.path.join(tempfile.gettempdir(), '_le.c'),
                         os.path.join(here, 'csurrogate.c'), '-lm'], capture_output=True, text=True)
     if r.returncode != 0:
         return None

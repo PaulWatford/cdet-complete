@@ -4,6 +4,7 @@
 Opt-in performance feature: the pure-python install needs no compiler; this builds a native extension so Python can
 call the frozen engine's primitives directly (no subprocess). Run: python bindings/build.py"""
 import os
+import tempfile
 import subprocess
 import sys
 import sysconfig
@@ -17,7 +18,7 @@ OUT = os.path.join(ROOT, "bindings")
 def build():
     import pybind11
     suffix = sysconfig.get_config_var("EXT_SUFFIX") or ".so"
-    obj = "/tmp/_cdet_bind_obj"
+    obj = os.path.join(tempfile.gettempdir(), '_cdet_bind_obj')
     os.makedirs(obj, exist_ok=True)
     # frozen engine + lattices compiled as C (gcc), unmodified
     subprocess.run(["gcc", "-O2", "-fPIC", "-I", ENGINE, "-c",

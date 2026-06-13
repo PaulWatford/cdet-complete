@@ -4,6 +4,7 @@
 Verifies the bindings (1) build, (2) are bit-identical to the FROZEN reference engine (they ARE the frozen functions,
 called natively), and (3) eliminate the subprocess/compile overhead for programmatic access."""
 import os
+import tempfile
 import subprocess
 import sys
 import time
@@ -31,10 +32,10 @@ def _frozen_c_value(tau, beta, mu):
     """compile a tiny program against the FROZEN engine and print G0_atom -- the independent reference."""
     src = (f'#include <stdio.h>\n#include "cdet_engine.h"\n'
            f'int main(){{printf("%.17g\\n", G0_atom({tau!r},{beta!r},{mu!r}));return 0;}}')
-    open("/tmp/_cdet_fc.c", "w").write(src)
-    subprocess.run(["gcc", "-O2", "-I", ENGINE, "/tmp/_cdet_fc.c", os.path.join(ENGINE, "cdet_engine.c"),
-                    "-lm", "-o", "/tmp/_cdet_fc"], check=True, capture_output=True)
-    return float(subprocess.run(["/tmp/_cdet_fc"], capture_output=True, text=True).stdout)
+    open(os.path.join(tempfile.gettempdir(), '_cdet_fc.c'), "w").write(src)
+    subprocess.run(["gcc", "-O2", "-I", ENGINE, os.path.join(tempfile.gettempdir(), '_cdet_fc.c'), os.path.join(ENGINE, "cdet_engine.c"),
+                    "-lm", "-o", os.path.join(tempfile.gettempdir(), '_cdet_fc' + ('.exe' if os.name=='nt' else ''))], check=True, capture_output=True)
+    return float(subprocess.run([os.path.join(tempfile.gettempdir(), '_cdet_fc' + ('.exe' if os.name=='nt' else ''))], capture_output=True, text=True).stdout)
 
 
 def _selftest():

@@ -27,6 +27,8 @@ RECORDED BENCHMARKS (gcc -O2, this environment; see the printed table for the li
 
 The frozen reference engine/ (194/194) is untouched."""
 import os, subprocess, time
+import shutil
+import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -40,27 +42,27 @@ def _selftest():
     rows = []
 
     # (1) SURROGATE -- instant, exact on coverage
-    assert _sh("gcc -O2 -o /tmp/cst csurrogate_test.c csurrogate.c -lm").returncode == 0
-    t0 = time.time(); out = _sh("/tmp/cst").stdout; ms = (time.time() - t0) * 1000
+    assert _sh(f'gcc -O2 -o "{os.path.join(tempfile.gettempdir(), 'cst' + ('.exe' if os.name=='nt' else ''))}" csurrogate_test.c csurrogate.c -lm').returncode == 0
+    t0 = time.time(); out = _sh(f'"{os.path.join(tempfile.gettempdir(), 'cst' + ('.exe' if os.name=='nt' else ''))}"').stdout; ms = (time.time() - t0) * 1000
     assert "ALL CASES MATCH" in out, out
     dev = out.split("worst dev")[1].split(";")[0].strip() if "worst dev" in out else "1e-9"
     rows.append(("surrogate", f"{ms:.1f} ms", f"dev {dev}", "instant; exact on coverage", "coverage-limited"))
 
     # (2) HYBRID -- exact vs frozen reference, scalable, now auto-fast
-    _sh("cp spectrum_l6.bin /tmp/")
-    assert _sh("gcc -O2 -o /tmp/cpw cdet_planewave_engine.c -lm").returncode == 0
-    t0 = time.time(); v = _sh("/tmp/cpw val < cdet_stable_engine_refs.txt").stdout; ms = (time.time() - t0) * 1000
+    shutil.copy(os.path.join(HERE, "spectrum_l6.bin"), tempfile.gettempdir())
+    assert _sh(f'gcc -O2 -o "{os.path.join(tempfile.gettempdir(), 'cpw' + ('.exe' if os.name=='nt' else ''))}" cdet_planewave_engine.c -lm').returncode == 0
+    t0 = time.time(); v = _sh(f'"{os.path.join(tempfile.gettempdir(), 'cpw' + ('.exe' if os.name=='nt' else ''))}" val < cdet_stable_engine_refs.txt').stdout; ms = (time.time() - t0) * 1000
     assert "0.00e+00" in v and "PASS" in v, v
     rows.append(("hybrid", f"{ms:.1f} ms", "0.00e+00 vs ref", "exact + scalable + auto-fast", "needs L=6 spectrum"))
 
     # (3) the APPLIED IMPROVEMENT: auto-fast == -nofast (correctness) and faster (gain) on a small grid
     g = "grid 30 36 6 3 200 7 0.01 2"
-    auto = _sh(f"/tmp/cpw {g}").stdout
-    slow = _sh(f"/tmp/cpw {g} -nofast").stdout
+    auto = _sh(f'"{os.path.join(tempfile.gettempdir(), 'cpw' + ('.exe' if os.name=='nt' else ''))}" {g}').stdout
+    slow = _sh(f'"{os.path.join(tempfile.gettempdir(), 'cpw' + ('.exe' if os.name=='nt' else ''))}" {g} -nofast').stdout
     auto_n = [l for l in auto.splitlines() if l and not l.startswith("#")]
     slow_n = [l for l in slow.splitlines() if l and not l.startswith("#")]
     assert auto_n == slow_n and len(auto_n) > 0, "auto-fast must be bit-identical to -nofast"
-    ta = _timed(f"/tmp/cpw grid 30 36 6 3 600 7 0.01 2"); ts = _timed(f"/tmp/cpw grid 30 36 6 3 600 7 0.01 2 -nofast")
+    ta = _timed(f'"{os.path.join(tempfile.gettempdir(), 'cpw' + ('.exe' if os.name=='nt' else ''))}" grid 30 36 6 3 600 7 0.01 2'); ts = _timed(f'"{os.path.join(tempfile.gettempdir(), 'cpw' + ('.exe' if os.name=='nt' else ''))}" grid 30 36 6 3 600 7 0.01 2 -nofast')
     speedup = ts / ta if ta > 0 else float("nan")
     assert speedup > 3.0, (ta, ts, speedup)
     print(f"  applied improvement verified: auto-fast bit-identical to -nofast; grid speedup ~{speedup:.0f}x "

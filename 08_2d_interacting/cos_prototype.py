@@ -24,6 +24,7 @@ HONEST COST PICTURE (the reason NOT to rush a port):
 
 The integration recommendations are in COS_PROTOTYPE_RESULT.md."""
 import os, subprocess, numpy as np
+import tempfile
 
 def popcount(x): return bin(x).count('1')
 
@@ -69,7 +70,7 @@ def cos_subsetconv(n, seed, dv):
 
 def _build_harness():
     here = os.path.dirname(os.path.abspath(__file__)); eng = os.path.join(here, '..', 'engine')
-    out = '/tmp/cosh_selftest'
+    out = os.path.join(tempfile.gettempdir(), 'cosh_selftest' + ('.exe' if os.name=='nt' else ''))
     r = subprocess.run(['gcc', '-O2', '-I', eng, '-o', out, os.path.join(here, 'cos_harness.c'),
                         os.path.join(eng, 'cdet_engine.c'), '-lm'], capture_output=True, text=True)
     return out if r.returncode == 0 else None

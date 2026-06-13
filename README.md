@@ -32,6 +32,18 @@ environment (`python3 -m venv .venv && . .venv/bin/activate && pip install -e ".
 environment, add `--break-system-packages`. If you would rather not install at all, every command also works as
 `python3 cdet.py <subcommand>` (or `./cdet <subcommand>`) straight from this folder.
 
+**Platforms (Windows / macOS / Linux).** The Python commands -- `eos`, `docc`, `chi`, `resum`, `diagmc`, `plot`,
+`export`, `sweep`, `gui`, and the rest of the analysis surface -- run on all three with only Python; no compiler is
+needed. The gates that build and check the C engine (`validate`, `converge`, `connected`, `bench`) additionally need a C
+compiler and `make` on your PATH:
+
+- **Linux:** `sudo apt install build-essential` (or your distro's gcc + make).
+- **macOS:** `xcode-select --install` (Apple Clang works; the Makefiles accept `CC=gcc` or `CC=clang`).
+- **Windows:** install a gcc + make toolchain such as [w64devkit](https://github.com/skeeto/w64devkit/releases)
+  (download the zip, unzip it, add its `bin` folder to PATH) or MSYS2. Then open a new terminal and `gcc --version`
+  should work; `cdet validate` will report `5/5 gates passed`. Without a compiler the C gates report FAIL, but every
+  Python command still works.
+
 Or run without installing (pure standard library; `rich`/`matplotlib` optional):
 
 ```
@@ -125,7 +137,7 @@ the n interaction vertices. The recursion is exact; the cost and memory are the
 2^n.
 
 ## The live record (where the current frontier is)
-The running ledger is `real_patterns_v192.md` (top level): every banked result #1..#156 with its
+The running ledger is `real_patterns_v194.md` (top level): every banked result #1..#156 with its
 epistemic label, the frozen predictions, and the open queue. Earlier frontiers (the deep-beta coefficient
 program, the million-site projector scaling, the thermodynamic-limit z-flow) are banked; the **current
 frontier** is the integration program prompted by Gunnar Möller's three papers (Kozik 2024 CoS;

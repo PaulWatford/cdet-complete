@@ -12,6 +12,7 @@ Datasets:
   chi           charge compressibility and spin susceptibility vs U
 """
 import csv
+import tempfile
 import json
 import os
 import numpy as np
@@ -119,7 +120,7 @@ def export(which, fmt, outdir):
 
 def _selftest():
     print("export self-test (validated observables -> CSV/JSON/HDF5; reproduced from the gated code paths):")
-    out = "/tmp/_cdet_export"
+    out = os.path.join(tempfile.gettempdir(), '_cdet_export')
     print(f"  HDF5 available: {_HDF5}")
     for which in _DATASETS:
         ds = _DATASETS[which]()

@@ -20,10 +20,14 @@ NEW SINCE v156 (the v157-160 arc):
 
 This gate checks the cross-model invariants AND one fast live check of each headline capability above, each tied to
 an exact anchor. The frozen reference is the retained parity baseline; this gate never touches it."""
-import os, subprocess
+import os, subprocess, tempfile, shutil
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+TMP = tempfile.gettempdir()
+_EXE = ".exe" if os.name == "nt" else ""
+def _tmpbin(name): return os.path.join(TMP, name + _EXE)
+def _q(p): return '"' + str(p) + '"'
 
 
 def _sh(cmd):
@@ -32,12 +36,13 @@ def _sh(cmd):
 
 def _surrogate_call(expr):
     src = ('#include <stdio.h>\n#include "csurrogate.h"\nint main(){printf("%.10f\\n", ' + expr + ');return 0;}')
-    open('/tmp/_csv161.c', 'w').write(src)
-    r = subprocess.run(['gcc', '-O2', '-I', HERE, '-o', '/tmp/_csv161', '/tmp/_csv161.c',
+    csrc = os.path.join(TMP, '_csv161.c'); cbin = _tmpbin('_csv161')
+    open(csrc, 'w').write(src)
+    r = subprocess.run(['gcc', '-O2', '-I', HERE, '-o', cbin, csrc,
                         os.path.join(HERE, 'csurrogate.c'), '-lm'], capture_output=True, text=True)
     if r.returncode != 0:
         return None
-    return float(subprocess.run(['/tmp/_csv161'], capture_output=True, text=True).stdout)
+    return float(subprocess.run([cbin], capture_output=True, text=True).stdout)
 
 
 def _selftest():
@@ -58,21 +63,22 @@ def _selftest():
     print("  [v147] surrogate == production, addition pole, fast-minors == numpy det: invariants hold.")
 
     # ---- FROZEN BASELINE PARITY: hybrid validates == the frozen reference (the retained benchmark anchor) ----
-    _sh("cp spectrum_l6.bin /tmp/")
-    assert _sh("gcc -O2 -o /tmp/cpw161 cdet_planewave_engine.c -lm") == ""  # compiles clean
-    v = _sh("/tmp/cpw161 val < cdet_stable_engine_refs.txt")
+    shutil.copy(os.path.join(HERE, "spectrum_l6.bin"), TMP)
+    cpw = _tmpbin('cpw161')
+    assert _sh(f"gcc -O2 -o {_q(cpw)} cdet_planewave_engine.c -lm") == ""  # compiles clean
+    v = _sh(f"{_q(cpw)} val < cdet_stable_engine_refs.txt")
     assert "0.00e+00" in v and "PASS" in v, v
     print("  [parity] hybrid == frozen reference at 0.00e+00 (frozen baseline retained, untouched).")
 
     # ---- v157: auto-fast is bit-identical to -nofast (parity) and is the default ----
     g = "grid 30 36 6 3 200 7 0.01 2"
-    auto = [l for l in _sh(f"/tmp/cpw161 {g}").splitlines() if l and not l.startswith("#")]
-    slow = [l for l in _sh(f"/tmp/cpw161 {g} -nofast").splitlines() if l and not l.startswith("#")]
+    auto = [l for l in _sh(f"{_q(cpw)} {g}").splitlines() if l and not l.startswith("#")]
+    slow = [l for l in _sh(f"{_q(cpw)} {g} -nofast").splitlines() if l and not l.startswith("#")]
     assert auto == slow and len(auto) > 0, "auto-fast must equal -nofast"
     print("  [v157] hybrid auto-fast projector path is bit-identical to -nofast (default-on, ~26x on grid).")
 
     # ---- v158: terminal state exposed; continuing the stream gives independent (non-identical) samples ----
-    r1 = _sh("/tmp/cpw161 grid 30 30 1 5 300 111 0.01 2")
+    r1 = _sh(f"{_q(cpw)} grid 30 30 1 5 300 111 0.01 2")
     term = [l for l in r1.splitlines() if "terminal_state" in l]
     assert term, "terminal_state must be exposed"
     print("  [v158] terminal sampler state exposed -> chained continuation (sqrt2 gain, no cycle).")

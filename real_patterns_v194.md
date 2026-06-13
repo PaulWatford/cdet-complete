@@ -1,4 +1,4 @@
-# real_patterns.md  (v192)
+# real_patterns.md  (v194)
 
 A running guide to the methodology that has actually produced results in the
 predict-vs-compute program. Each entry is a method that was tried and what it did.
@@ -3378,6 +3378,35 @@ streaming/high-order, self-energy maps, docker.
   the cache write was not atomic -- now temp-file + os.replace so an interrupt can neither corrupt nor lose the cache. No
   physics changed; frozen engine untouched (194/194). cdet_study.py + cdet_gui.py + cdet.py + LIFECYCLE_TEST_v192_RESULT.md.
 
+- CROSS-PLATFORM FIX -- Windows/macOS/Linux (v193): Paul published the repo to GitHub and did a blind install on his own
+  Windows PC (Python 3.13 + w64devkit gcc/make). `cdet validate` reported the C-engine gates as FAIL even though the C
+  compiled and ran perfectly by hand (gcc built csurrogate_test.c+csurrogate.c; the binary printed "ALL CASES MATCH ...
+  worst dev 3.55e-15"). Root cause: the harness hardcoded Unix-isms -- it built to /tmp/_cdet_* (no /tmp on Windows; a
+  Windows gcc binary is *.exe) and ran that literal path; used `cp spectrum_l6.bin /tmp/`; and launched the consolidation
+  gate with `PYTHONPATH=. python3 ...` (inline env syntax is Unix-shell-only and the interpreter is `python`, not
+  `python3`, on Windows). Only the frozen gate passed there because it goes through make. Fixed in cdet.py with small
+  cross-platform helpers: _binpath (tempfile.gettempdir() + .exe on os.name=='nt'), _q (shell-quote for spaces),
+  _stage_tmp (shutil.copy not cp), and _sh(env=...) plus sys.executable instead of `python3`. Covered validate (4 compile
+  gates + consolidation), converge, run, the shell fallback, and the --selftest temp paths; the && chaining and < stdin
+  redirect work in cmd.exe too, so they stayed. Also fixed the doc gap the same test caught: README + QUICKSTART gained a
+  Platforms note (Python commands need no compiler on any OS; the C gates need gcc+make -- build-essential on Linux,
+  xcode-select on macOS, w64devkit/MSYS2 on Windows). Linux regression: still 5/5, --selftest/converge/run/crosscheck/
+  bench/diagmc/surrogate all pass; frozen engine untouched (194/194). cdet.py + README.md + QUICKSTART.md +
+  CROSS_PLATFORM_v193_RESULT.md.
+
+- CROSS-PLATFORM SWEEP -- every hardcoded /tmp removed (v194): a second blind Windows run after v193 showed `cdet validate`
+  still at 4/5: the consolidation health gate failed with FileNotFoundError: '/tmp/_csv161.c'. consolidation_v161.py (the
+  gate's script) compiles its own helper C file to /tmp at runtime -- a Unix-ism one level BELOW the CLI that the v193
+  cdet.py fix had not reached. A tree-wide grep then found the same hardcoded `/tmp/` idiom in ~13 more modules. Removed
+  every hardcoded /tmp from executable Python and replaced it with tempfile.gettempdir(), adding `.exe` for launched
+  binaries on Windows and shutil.copy instead of `cp ... /tmp/`: consolidation_v161 (fixes validate -> 5/5 on Windows),
+  consolidation_v138/147/156, fast_minors (which `cdet bench` advertises), cos_prototype, triple_benchmark,
+  two_particle_run, chained_run, stress_test_v139, run_to_log, the plots/export _selftest output paths, and the optional
+  bindings. A final grep finds no hardcoded /tmp in any executable line (only an example in one docstring). Verified on
+  Linux: validate 5/5, crosscheck/--selftest/diagmc/assistant/surrogate/frozen 194/194 all pass, and the patched module
+  self-tests (consolidation_v138/147/156, fast_minors, cos_prototype, plots, export) still PASS. Pure portability; no
+  physics; frozen engine untouched. consolidation_v161.py + 13 modules + bindings/* + CROSS_PLATFORM_SWEEP_v194_RESULT.md.
+
 ### #177 -- Packaging and CI (v167)
 
 Continued the elevation checklist at items #4/#6 (distribution / commercial readiness). ADDED pyproject.toml: the
@@ -3466,6 +3495,56 @@ converged (1e-9); half-filling wall recedes with L. Frozen reference engine unto
 (self-test gate PASS) + `cdet wall` subcommand + WALL_VS_SIZE_v172_RESULT.md; csurrogate_params.h v172 note. Remaining
 deeper-physics roadmap: streaming/high-order orders; and tightening the wall estimate beyond the leading instability
 (the complex-U structure).
+
+### #204 -- Cross-platform sweep: every hardcoded /tmp removed (v194)
+
+A second blind run on the same Windows machine, after v193, showed `cdet validate` still at 4/5 -- the three C-compile
+gates and the frozen engine now passed, but the consolidation health gate failed with FileNotFoundError:
+'/tmp/_csv161.c'. The cause was the same class of Unix-ism as v193, one level deeper: the gate's own script
+consolidation_v161.py compiles a tiny surrogate-call helper C file at runtime and wrote it to /tmp, which does not exist
+on Windows. v193 had fixed the compile/run sites inside cdet.py, but not the /tmp writes inside the Python module the gate
+imports and runs. A tree-wide search then revealed the identical hardcoded `/tmp/` idiom in roughly a dozen more modules
+-- the consolidation siblings v138/v147/v156, the benchmark and research scripts fast_minors (which cdet bench points
+users at), cos_prototype, triple_benchmark, two_particle_run, chained_run, stress_test_v139 and run_to_log, the _selftest
+output paths in plots and export, and the optional C++ bindings. Fix: removed every hardcoded /tmp from executable Python
+and replaced it with tempfile.gettempdir(), appending a .exe suffix to any binary that is actually launched (so it can run
+on Windows) and using shutil.copy in place of `cp spectrum_l6.bin /tmp/`. A final tree-wide grep confirms no hardcoded
+/tmp remains in any executable line (the sole match is an example command inside one module's docstring). This makes
+consolidation_v161 -- and therefore cdet validate -- pass 5/5 on Windows, and makes the deep standalone modules runnable
+on Windows/macOS/Linux as well. Verified on Linux with no regressions: validate 5/5; crosscheck, --selftest, the diagmc,
+assistant and surrogate gates, and the frozen reference 194/194 all pass; and the individually patched module self-tests
+(consolidation_v138/147/156, fast_minors, cos_prototype, plots, export) each still report PASS. Pure portability plumbing;
+no physics changed; the frozen reference engine is untouched. consolidation_v161.py + consolidation_v138/147/156.py +
+fast_minors.py + cos_prototype.py + triple_benchmark.py + two_particle_run.py + chained_run.py + stress_test_v139.py +
+run_to_log.py + plots.py + export.py + bindings/bindings_check.py + bindings/build.py + csurrogate_params.h v194 +
+CROSS_PLATFORM_SWEEP_v194_RESULT.md.
+
+### #203 -- Cross-platform fix: the gates run on Windows, macOS and Linux (v193)
+
+After publishing the repo to GitHub, Paul installed and ran it blind on his own Windows machine (Python 3.13, with the
+w64devkit gcc/make toolchain added to PATH). Everything Python worked first try -- eos, diagmc with the full sign-wall
+display, the browser GUI -- but `cdet validate` reported the C-engine gates as FAIL. Crucially, the C itself was fine:
+compiling csurrogate_test.c + csurrogate.c by hand built cleanly and the binary printed "ALL CASES MATCH THE PYTHON
+REFERENCE TO 1e-09 (worst dev 3.55e-15)". So the science was correct and only the validation harness was non-portable --
+exactly the kind of false-FAIL a real cross-platform user surfaces. Root cause, in cdet.py: the compile-and-run gates
+hardcoded Unix conventions -- they built to /tmp/_cdet_* (there is no /tmp on Windows, and a Windows gcc binary carries a
+.exe suffix) and then ran that literal path; staged data with `cp spectrum_l6.bin /tmp/` (cp is a Unix command); and ran
+the consolidation gate via `PYTHONPATH=. python3 consolidation_v161.py`, where the inline VAR=value assignment is
+Unix-shell syntax and the interpreter is `python`, not `python3`, on Windows. Only the frozen-engine gate had passed on
+Windows, because it runs through make, which manages its own paths. Fix: added cross-platform helpers and rewrote every
+build/run site to use them -- _binpath(name) returns a temp path from tempfile.gettempdir() with a .exe suffix when
+os.name=='nt'; _q(path) shell-quotes paths so spaces in Windows temp dirs are safe; _stage_tmp copies data files with
+shutil.copy instead of cp; and _sh gained an env= parameter so environment is passed through subprocess rather than via
+inline shell syntax, with the consolidation and shell gates now invoking sys.executable (the running interpreter) instead
+of a literal python3. This covers validate (all four compile gates plus consolidation), converge, run, the
+interactive-shell fallback, and the --selftest temp output paths; the && chaining and < stdin redirect the gates use are
+valid in both cmd.exe and POSIX shells, so they were left untouched. Separately fixed the documentation gap the same blind
+test flagged: README and QUICKSTART now carry a Platforms note stating that the Python commands need no compiler on any OS,
+and that the C gates need gcc + make -- build-essential on Linux, `xcode-select --install` on macOS, and w64devkit or
+MSYS2 (download, unzip, add bin to PATH) on Windows. Linux regression check: still 5/5 gates, and --selftest, converge,
+run, crosscheck, bench, the diagmc and surrogate gates, and the frozen 194/194 all pass unchanged. Pure portability
+plumbing; no physics changed; the frozen reference engine is untouched. cdet.py + README.md + QUICKSTART.md +
+csurrogate_params.h v193 + CROSS_PLATFORM_v193_RESULT.md.
 
 ### #202 -- Blind lifecycle test: pausing, interrupting, restarting, walking away (v192)
 

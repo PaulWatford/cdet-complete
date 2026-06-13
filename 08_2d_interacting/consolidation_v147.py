@@ -16,6 +16,7 @@ sun_resummation_N, rational_lattice_boundary, resummation. Each self-tests again
 
 This gate checks the three models agree on the shared observables and that the headline capabilities are live."""
 import os, subprocess
+import tempfile
 import numpy as np
 from physical_mapping import addition_pole
 from sun_lattice_production import c1_production, n1_production, g0_amplitudes
@@ -25,9 +26,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 
 def _surrogate_call(expr, extra_args=""):
     src = ('#include <stdio.h>\n#include "csurrogate.h"\nint main(){printf("%.10f\\n", ' + expr + ');return 0;}')
-    open('/tmp/_sc.c', 'w').write(src)
-    out = '/tmp/_sc'
-    r = subprocess.run(['gcc', '-O2', '-I', HERE, '-o', out, '/tmp/_sc.c', os.path.join(HERE, 'csurrogate.c'), '-lm'],
+    open(os.path.join(tempfile.gettempdir(), '_sc.c'), 'w').write(src)
+    out = os.path.join(tempfile.gettempdir(), '_sc' + ('.exe' if os.name=='nt' else ''))
+    r = subprocess.run(['gcc', '-O2', '-I', HERE, '-o', out, os.path.join(tempfile.gettempdir(), '_sc.c'), os.path.join(HERE, 'csurrogate.c'), '-lm'],
                        capture_output=True, text=True)
     if r.returncode != 0:
         return None

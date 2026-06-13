@@ -19,6 +19,7 @@ fast-minor + subset-convolution decomposition so it can be checked term-by-term 
 VERIFIED (self-test, live against the engine via cos_harness.c): D_vac, D_corr, and the final C_V all
 match the engine for n=3..7 to ~1e-14. This supplements the engine; it does not replace or modify it."""
 import os, subprocess
+import tempfile
 import numpy as np
 from cos_prototype import cos_subsetconv, popcount
 
@@ -62,7 +63,7 @@ def _g0_test(i, j, tau):
 
 def _build_harness():
     here = os.path.dirname(os.path.abspath(__file__)); eng = os.path.join(here, '..', 'engine')
-    out = '/tmp/cosh_fm'
+    out = os.path.join(tempfile.gettempdir(), 'cosh_fm' + ('.exe' if os.name=='nt' else ''))
     r = subprocess.run(['gcc', '-O2', '-I', eng, '-o', out, os.path.join(here, 'cos_harness.c'),
                         os.path.join(eng, 'cdet_engine.c'), '-lm'], capture_output=True, text=True)
     return out if r.returncode == 0 else None

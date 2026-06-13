@@ -18,6 +18,8 @@ response, not just the one-body amplitude.
 NET: the continuation gains carry from one particle to two, and from the amplitude to the interaction. The frozen
 reference is untouched; the only hybrid change remains the v158 print-only terminal_state."""
 import os, subprocess, statistics
+import shutil
+import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -27,8 +29,9 @@ def _sh(cmd):
 
 
 def _build():
-    _sh("cp spectrum_l6.bin /tmp/")
-    _sh("gcc -O2 -o /tmp/cpw_tp cdet_planewave_engine.c -lm")
+    shutil.copy(os.path.join(HERE, "spectrum_l6.bin"), tempfile.gettempdir())
+    _cpw = os.path.join(tempfile.gettempdir(), "cpw_tp" + (".exe" if os.name=="nt" else ""))
+    _sh(f'gcc -O2 -o "{_cpw}" cdet_planewave_engine.c -lm')
 
 
 def _mix(state):
@@ -60,7 +63,7 @@ def rng_walk2(start, seed, rounds, L=6):
 
 def grid(nt, seed, beta=30):
     """one grid point -> (A one-body amplitude, c1 two-body interaction response, terminal RNG state)."""
-    out = _sh(f"/tmp/cpw_tp grid {beta} {beta} 1 5 {nt} {seed} 0.01 2")
+    out = _sh(f'"{os.path.join(tempfile.gettempdir(), "cpw_tp" + (".exe" if os.name=="nt" else ""))}" grid {beta} {beta} 1 5 {nt} {seed} 0.01 2')
     A = c1 = term = None
     for l in out.splitlines():
         if l.startswith(f"{beta}."):

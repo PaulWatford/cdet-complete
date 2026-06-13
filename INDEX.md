@@ -31,7 +31,7 @@ engine matches the reference at 0.00e+00.
 | `engine/` | FROZEN reference engine (`make CC=gcc test` -> 194/194); the parity anchor |
 | `05_2d_lattice/` | lattices incl. the O(L) plane-wave propagator `Square2DPW` (reaches 100x100) |
 | `08_2d_interacting/` | the main body: SU(N) EoS + observables, resummation, the wall suite, surrogate, plane-wave engine |
-| `07_predict_vs_compute/` | the `CROSSCHECK_v5.md` … `CROSSCHECK_v192.md` series (freeze-then-predict records) |
+| `07_predict_vs_compute/` | the `CROSSCHECK_v5.md` … `CROSSCHECK_v194.md` series (freeze-then-predict records) |
 | `bindings/` | optional pybind11 native bindings to the frozen engine (opt-in build) |
 | `01_…`–`06_…`, `engine_exp/`, `framework_bridge/` | earlier stages and experiments |
 
@@ -63,9 +63,9 @@ bindings, ~10^6x over subprocess (v170) · Docker (v171).
 
 ## Where the knowledge lives
 
-- **Ledger**: `real_patterns_v192.md` — entries #1…#187, the running narrative + every banked correction.
+- **Ledger**: `real_patterns_v194.md` — entries #1…#187, the running narrative + every banked correction.
 - **Findings**: 127 `*_RESULT.md` files (each a self-contained result with its validation).
-- **Predictions**: `07_predict_vs_compute/CROSSCHECK_v5.md` … `CROSSCHECK_v192.md` (freeze-then-predict).
+- **Predictions**: `07_predict_vs_compute/CROSSCHECK_v5.md` … `CROSSCHECK_v194.md` (freeze-then-predict).
 - **Benchmark note**: `bethe_cft_benchmark_note.md` (the cross-check range + running log).
 
 ## How to trust it

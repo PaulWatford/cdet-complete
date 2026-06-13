@@ -23,7 +23,7 @@ def main(argv):
         print("usage: python3 run_to_log.py LOGFILE -- ENGINE args...", file=sys.stderr)
         return 2
     cut = argv.index("--")
-    logpath = argv[1] if len(argv) > 1 and argv[1] != "--" else "/tmp/engine_run.log"
+    logpath = argv[1] if len(argv) > 1 and argv[1] != "--" else os.path.join(tempfile.gettempdir(), 'engine_run.log')
     cmd = argv[cut + 1:]
     if not cmd:
         print("no engine command after --", file=sys.stderr)

@@ -26,8 +26,10 @@ colorized/tabulated; otherwise it falls back to clean ASCII. Nothing here edits 
 import math
 import argparse
 import os
+import shutil
 import sys
 import subprocess
+import tempfile
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 INTER = os.path.join(ROOT, "08_2d_interacting")
@@ -103,8 +105,27 @@ def panel(text, title=""):
         print(text)
 
 
-def _sh(cmd, cwd=None):
-    return subprocess.run(cmd, shell=True, capture_output=True, text=True, cwd=cwd)
+def _sh(cmd, cwd=None, env=None):
+    full_env = {**os.environ, **env} if env else None
+    return subprocess.run(cmd, shell=True, capture_output=True, text=True, cwd=cwd, env=full_env)
+
+
+def _binpath(name):
+    """Temp path for a compiled helper binary -- '.exe' on Windows so the built program can actually be launched."""
+    return os.path.join(tempfile.gettempdir(), name + (".exe" if os.name == "nt" else ""))
+
+
+def _q(p):
+    """Quote a path for the shell (handles spaces in Windows temp paths)."""
+    return '"' + str(p) + '"'
+
+
+def _stage_tmp(filename, cwd):
+    """Copy a needed data file into the temp dir cross-platform (replaces the Unix `cp ... /tmp/`)."""
+    try:
+        shutil.copy(os.path.join(cwd, filename), tempfile.gettempdir())
+    except Exception:
+        pass
 
 
 def _cached_series(N, K):
@@ -146,20 +167,23 @@ def cmd_validate(a):
     ok = "194 passed" in (r.stdout + r.stderr)
     gates.append(("frozen reference engine", "194/194 numerically exact", ok))
 
-    r = _sh("gcc -O2 -std=c11 -o /tmp/_cdet_cst csurrogate_test.c csurrogate.c -lm && /tmp/_cdet_cst", cwd=INTER)
+    cst = _binpath("_cdet_cst")
+    r = _sh(f"gcc -O2 -std=c11 -o {_q(cst)} csurrogate_test.c csurrogate.c -lm && {_q(cst)}", cwd=INTER)
     ok = "ALL CASES MATCH" in r.stdout
     gates.append(("surrogate carriers", "match python to 1e-9", ok))
 
-    _sh("cp spectrum_l6.bin /tmp/", cwd=INTER)
-    r = _sh("gcc -O2 -std=c11 -o /tmp/_cdet_cpw cdet_planewave_engine.c -lm && /tmp/_cdet_cpw val < cdet_stable_engine_refs.txt", cwd=INTER)
+    _stage_tmp("spectrum_l6.bin", INTER)
+    cpw = _binpath("_cdet_cpw")
+    r = _sh(f"gcc -O2 -std=c11 -o {_q(cpw)} cdet_planewave_engine.c -lm && {_q(cpw)} val < cdet_stable_engine_refs.txt", cwd=INTER)
     ok = "0.00e+00" in r.stdout and "PASS" in r.stdout
     gates.append(("hybrid engine parity", "0.00e+00 vs frozen ref", ok))
 
-    r = _sh("gcc -O2 -std=c99 -I. -I../engine square2d_pw_demo.c lattices.c ../engine/cdet_engine.c -lm -o /tmp/_cdet_s2d && /tmp/_cdet_s2d", cwd=LAT2D)
+    s2d = _binpath("_cdet_s2d")
+    r = _sh(f"gcc -O2 -std=c99 -I. -I../engine square2d_pw_demo.c lattices.c ../engine/cdet_engine.c -lm -o {_q(s2d)} && {_q(s2d)}", cwd=LAT2D)
     ok = r.returncode == 0 and "PASS" in r.stdout
     gates.append(("2D plane-wave path", "exact vs numerical; TD-converged", ok))
 
-    r = _sh("PYTHONPATH=. python3 consolidation_v161.py", cwd=INTER)
+    r = _sh(f"{_q(sys.executable)} consolidation_v161.py", cwd=INTER, env={"PYTHONPATH": INTER})
     ok = "PASS" in r.stdout
     gates.append(("consolidation health gate", "all capabilities coherent", ok))
 
@@ -176,10 +200,11 @@ def cmd_validate(a):
 def cmd_converge(a):
     """2D thermodynamic-limit demonstration via the plane-wave propagator (4x4 -> 100x100)."""
     rule("cdet converge -- 2D thermodynamic limit (plane-wave propagator)")
-    build = _sh("gcc -O2 -std=c99 -I. -I../engine square2d_pw_demo.c lattices.c ../engine/cdet_engine.c -lm -o /tmp/_cdet_s2d", cwd=LAT2D)
+    s2d = _binpath("_cdet_s2d")
+    build = _sh(f"gcc -O2 -std=c99 -I. -I../engine square2d_pw_demo.c lattices.c ../engine/cdet_engine.c -lm -o {_q(s2d)}", cwd=LAT2D)
     if build.returncode != 0:
         cprint("build failed:\n" + build.stderr, "red"); return 1
-    r = _sh("/tmp/_cdet_s2d", cwd=LAT2D)
+    r = _sh(_q(s2d), cwd=LAT2D)
     # parse the convergence rows "  LxL ( sites)  G0_NN= value"
     rows = []
     for ln in r.stdout.splitlines():
@@ -410,11 +435,12 @@ def cmd_run(a):
         a.beta_hi = a.beta_hi_opt if a.beta_hi_opt is not None else a.beta_lo + a.bstep
     rule(f"cdet run -- hybrid grid  (L={a.L}, beta {a.beta_lo}..{a.beta_hi}, step {a.bstep})")
     cprint(f"  customize:  cdet run --L {a.L} --beta {a.beta_lo} --beta-hi {a.beta_hi} --bstep {a.bstep} --K {a.K}", "cyan")
-    _sh("cp spectrum_l6.bin /tmp/", cwd=INTER)
-    build = _sh("gcc -O2 -std=c11 -o /tmp/_cdet_cpw cdet_planewave_engine.c -lm", cwd=INTER)
+    _stage_tmp("spectrum_l6.bin", INTER)
+    cpw = _binpath("_cdet_cpw")
+    build = _sh(f"gcc -O2 -std=c11 -o {_q(cpw)} cdet_planewave_engine.c -lm", cwd=INTER)
     if build.returncode != 0:
         cprint("build failed:\n" + build.stderr, "red"); return 1
-    cmd = (f"/tmp/_cdet_cpw grid {a.beta_lo} {a.beta_hi} {a.bstep} {a.K} {a.NT} {a.seed} {a.delta} {a.mode}")
+    cmd = (f"{_q(cpw)} grid {a.beta_lo} {a.beta_hi} {a.bstep} {a.K} {a.NT} {a.seed} {a.delta} {a.mode}")
     r = _sh(cmd, cwd=INTER)
     rows = []
     for ln in r.stdout.splitlines():
@@ -462,7 +488,7 @@ def cmd_shell(a):
         cdet_shell.main() if hasattr(cdet_shell, "main") else cdet_shell.Shell().repl()
     except AttributeError:
         # fall back to running the module
-        _sh("PYTHONPATH=. python3 cdet_shell.py", cwd=INTER)
+        _sh(f"{_q(sys.executable)} cdet_shell.py", cwd=INTER, env={"PYTHONPATH": INTER})
     return 0
 
 
@@ -588,9 +614,9 @@ def _selftest():
     assert ns.func(ns) == 0
     ns = build_parser().parse_args(["chi", "--N", "2", "--U", "0.0", "1.0"])
     assert ns.func(ns) == 0
-    ns = build_parser().parse_args(["plot", "convergence", "--out", "/tmp/_cdet_cli_fig"])
+    ns = build_parser().parse_args(["plot", "convergence", "--out", os.path.join(tempfile.gettempdir(), "_cdet_cli_fig")])
     assert ns.func(ns) == 0
-    ns = build_parser().parse_args(["export", "chi", "--format", "csv", "--out", "/tmp/_cdet_cli_data"])
+    ns = build_parser().parse_args(["export", "chi", "--format", "csv", "--out", os.path.join(tempfile.gettempdir(), "_cdet_cli_data")])
     assert ns.func(ns) == 0
     ns = build_parser().parse_args(["info"])
     assert ns.func(ns) == 0

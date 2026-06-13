@@ -22,6 +22,7 @@ NEW SINCE v147 -- two arcs:
 This gate checks the cross-model invariants AND one fast live check of each headline capability above, each tied to
 an exact anchor. Frozen engine/ stays 194/194; this gate never touches it."""
 import os, subprocess
+import tempfile
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -29,12 +30,12 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 
 def _surrogate_call(expr):
     src = ('#include <stdio.h>\n#include "csurrogate.h"\nint main(){printf("%.10f\\n", ' + expr + ');return 0;}')
-    open('/tmp/_csv.c', 'w').write(src)
-    r = subprocess.run(['gcc', '-O2', '-I', HERE, '-o', '/tmp/_csv', '/tmp/_csv.c',
+    open(os.path.join(tempfile.gettempdir(), '_csv.c'), 'w').write(src)
+    r = subprocess.run(['gcc', '-O2', '-I', HERE, '-o', os.path.join(tempfile.gettempdir(), '_csv' + ('.exe' if os.name=='nt' else '')), os.path.join(tempfile.gettempdir(), '_csv.c'),
                         os.path.join(HERE, 'csurrogate.c'), '-lm'], capture_output=True, text=True)
     if r.returncode != 0:
         return None
-    return float(subprocess.run(['/tmp/_csv'], capture_output=True, text=True).stdout)
+    return float(subprocess.run([os.path.join(tempfile.gettempdir(), '_csv' + ('.exe' if os.name=='nt' else ''))], capture_output=True, text=True).stdout)
 
 
 def _selftest():

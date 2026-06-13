@@ -10,6 +10,7 @@ Turns the validated physics into publication-quality figures (matplotlib, Agg ba
 Each figure is reproduced from the same code paths the gates validate, so the plots cannot drift from the numbers.
 The frozen engine is not involved (these are post-processed observables)."""
 import os
+import tempfile
 import numpy as np
 import matplotlib
 matplotlib.use("Agg")
@@ -107,7 +108,7 @@ def save(which, outdir):
 
 def _selftest():
     print("plots self-test (built-in visualization of validated results):")
-    out = "/tmp/_cdet_plots"
+    out = os.path.join(tempfile.gettempdir(), '_cdet_plots')
     for which in ("convergence", "resummation", "mott", "summary"):
         p = save(which, out)
         sz = os.path.getsize(p)

@@ -22,11 +22,12 @@ This module re-runs the FAST stress checks (guards + fast==direct + validation) 
 large-L / deep-beta scans are documented in the result. Frozen engine untouched (194/194); the hybrid's
 val gate stays 0.00e+00 after the guards (they are input-only)."""
 import os, subprocess, shutil
+import tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 def _build():
-    work = '/tmp/stress_v139'; os.makedirs(work, exist_ok=True)
+    work = os.path.join(tempfile.gettempdir(), 'stress_v139'); os.makedirs(work, exist_ok=True)
     shutil.copy(os.path.join(HERE, 'spectrum_l6.bin'), work)
     exe = os.path.join(work, 'cpw')
     r = subprocess.run(['gcc', '-O2', '-std=c11', '-o', exe,

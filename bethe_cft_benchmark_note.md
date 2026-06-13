@@ -1094,7 +1094,7 @@ All in `cdet_complete/07_predict_vs_compute/`:
 - `07/atomic_reference_order_reduction.py` (v30): atom oracle quantifying the reference-shift lever --
   order to 1e-6 @ U=2: infinity (bare) -> 3-11 (shifted); largest term 3.8e12 -> 0.2 (cancellation
   cured). Confirmed vs the C engine G_exact_atom. Target for the cdet_order_mc reference swap.
-- `CROSSCHECK_v5.md` ... `CROSSCHECK_v192.md` ... per-result proof data.
+- `CROSSCHECK_v5.md` ... `CROSSCHECK_v194.md` ... per-result proof data.
 
 Engine: `cd cdet_complete/engine && make CC=gcc test` gives 194 passed, 0 failed;
 `make CC=gcc bench && ./bench_qss` gives the fast-versus-dense determinant agreement.
@@ -1290,3 +1290,9 @@ Engine: `cd cdet_complete/engine && make CC=gcc test` gives 194 passed, 0 failed
 - Lifecycle test v192. Blind pause/restart/interrupt test; made `cdet sweep` interrupt-resilient (incremental data.csv +
   flushed log + finalized summary on Ctrl-C), the GUI port-conflict graceful (auto free port), and the cache write atomic.
   No physics. See CROSSCHECK_v192, LIFECYCLE_TEST_v192_RESULT.md.
+- Cross-platform fix v193. A blind Windows install showed the C gates falsely FAILing (Unix-only /tmp/.exe/cp/python3 in
+  the harness); rewrote build/run sites portably (tempfile+.exe, shutil, sys.executable, env via subprocess) and added a
+  per-OS compiler note to the docs. Linux still 5/5; no physics. See CROSSCHECK_v193, CROSS_PLATFORM_v193_RESULT.md.
+- Cross-platform sweep v194. Removed every hardcoded /tmp from executable Python (consolidation_v161 + ~13 modules);
+  `cdet validate` now 5/5 on Windows. Linux self-tests unchanged; no physics. See CROSSCHECK_v194,
+  CROSS_PLATFORM_SWEEP_v194_RESULT.md.

@@ -22,6 +22,13 @@ The rest of this file is the deeper build/verify path and the research modules.
 You need only a C compiler and make. Python (with numpy) is optional, for the
 analysis packages.
 
+Platform note: on Linux use `build-essential` (gcc + make); on macOS run
+`xcode-select --install`; on Windows install w64devkit
+(https://github.com/skeeto/w64devkit/releases) or MSYS2 and add its `bin` to PATH.
+The Python commands (`./cdet eos`, `diagmc`, `gui`, ...) need no compiler at all --
+only the C-engine gates (`validate`, `converge`, `connected`, `bench`) do.
+
+
 ## 1. Build and verify the engine (the only step that matters)
 ```
 unzip cdet_complete.zip

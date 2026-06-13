@@ -3,6 +3,7 @@ __pycache__/
 *.o
 *.so
 *.a
+*.exe
 a.out
 cdet_runs/
 cdet_data/
