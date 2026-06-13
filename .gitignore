@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+*.o
+*.so
+*.a
+a.out
+cdet_runs/
+cdet_data/
+cdet_figures/
+.eos_cache.json
+*.egg-info/
+build/
+dist/
